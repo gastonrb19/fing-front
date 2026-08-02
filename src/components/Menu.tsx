@@ -1,5 +1,4 @@
 "use client";
-import { NavLink } from "react-router";
 import { useState } from "react";
 import ItemMenu from "./ItemMenu";
 
@@ -18,7 +17,7 @@ export default function Menu() {
         </ul>
       </nav>
       <button
-        className="w-28 min-w-[112px] bg-purple-700 text-white px-4 py-2 rounded-b-lg hover:bg-purple-900 duration-300 text-center"
+        className="w-28 min-w-[112px] bg-cyan-700 text-white px-4 py-2 rounded-b-lg hover:bg-cyan-900 duration-300 text-center"
         onClick={() => setIsOpen(!isOpen)}
       >
         Menu
