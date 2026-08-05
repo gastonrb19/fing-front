@@ -6,7 +6,7 @@ export default function TitleMovements({
   displayFilter: boolean;
 }) {
   return (
-    <h1 className="flex justify-center text-2xl font-bold text-center tracking-wide text-gray-800">
+    <h1 className="flex justify-center text-4xl font-bold text-center tracking-wide text-gray-800 my-5">
       <span className="text-purple-800">T</span>ransacciones
       <button
         className="ml-2 w-7 cursor-pointer"
