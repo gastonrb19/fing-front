@@ -7,19 +7,13 @@ Archivo para llevar el historial de cambios (LOG) y las tareas pendientes (TODO)
 ## 📌 Tareas por hacer (TODO)
 
 ### Prioridad alta
-- [ ] Desplegar las cards seccionadas por categoría y sus respectivas subcategorías: agrupar sin mezclarlas entre sí y sin mostrar la categoría dentro de la card.
 - [ ] Conectar las cards de movimientos con datos reales (API / backend) en vez de datos hardcodeados en `WrapCardMovement.tsx`.
 - [ ] Formatear `amount` como moneda (separador de miles, símbolo, decimales) y diferenciar ingresos/gastos por color.
 
 ### Prioridad media
-- [ ] Revisar la lógica de `displayCard`: definir qué se muestra colapsado vs. desplegado (número, descripción, monto, categorías).
-- [ ] Manejar descripciones largas (>150 caracteres): truncado o "ver más".
-- [ ] Corregir `nro` duplicado / props repetidas si vuelven a usarse datos de ejemplo.
 
 ### Prioridad baja / mejoras
-- [ ] Accesibilidad: usar `<button>` semántico para expandir/colapsar toda la card.
-- [ ] Estados de carga y vacío (skeletons / "sin movimientos").
-- [ ] Tests de componente para `CardMovement`.
+- [ ] Agregar movimiento del card hacia la izquierda para abrirlo con más detalles.
 
 ---
 
