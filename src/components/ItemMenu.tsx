@@ -7,9 +7,9 @@ export default function ItemMenu({
   url: string;
 }) {
   const itemClass =
-    "block w-28 min-w-[112px] px-4 py-2 hover:border-cyan-700 border-x-1 border-transparent duration-300 hover:text-cyan-700";
+    "block w-full px-4 py-2 text-center hover:border-cyan-700 border-x-1 border-transparent duration-300 hover:text-cyan-700";
   return (
-    <li className="w-28 text-center">
+    <li className="w-full text-center">
       <NavLink to={url} className={itemClass}>
         {title}
       </NavLink>

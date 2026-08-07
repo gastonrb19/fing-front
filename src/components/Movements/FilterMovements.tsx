@@ -89,7 +89,7 @@ export default function FilterMovements({ displayFilter, setDisplayFilter }: { d
           <option value="fuel">Combustible</option>
         </select>
       </div>
-      <button type="submit" className="w-fit justify-self-center bg-purple-800 hover:bg-purple-900 text-white font-bold py-1 px-4 rounded col-span-full md:col-span-2">
+      <button type="submit" className="w-fit justify-self-center bg-cyan-800 hover:bg-cyan-900 text-white font-bold py-1 px-4 rounded col-span-full md:col-span-2">
         Filtrar
       </button>
     </form>

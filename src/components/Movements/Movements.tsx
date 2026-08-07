@@ -3,7 +3,7 @@ import Menu from "../Menu";
 import FilterDocument from "./FilterMovements";
 import { useState } from "react";
 import TitleMovements from "./TitleMovements";
-import WrapCardMovement from "./WrapCardMovement";
+import WrapSections from "./WrapSections";
 
 export default function Movements() {
   const [displayFilter, setDisplayFilter] = useState(false);
@@ -17,7 +17,7 @@ export default function Movements() {
         displayFilter={displayFilter}
         setDisplayFilter={setDisplayFilter}
       />
-      <WrapCardMovement/>
+      <WrapSections/>
       <Menu />
     </>
   );
