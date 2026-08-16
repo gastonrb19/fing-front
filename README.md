@@ -1,94 +1,72 @@
-# Fing — Frontend
+# Fing - Arquitectura y Hoja de Ruta del Frontend
 
-Aplicación web para el **control y la visualización de finanzas personales**. Permite a los usuarios registrar movimientos, consultar transacciones y llevar un seguimiento de su situación financiera de forma clara y sencilla.
+Este documento detalla la estructura, flujo y evolución del **Frontend (Web y Móvil)** de la plataforma "Fing", diseñado utilizando diagramas de texto plano (ASCII/Unicode) para asegurar compatibilidad total en cualquier visor.
 
-El frontend consume una **REST API construida con Express**, encargada de la autenticación y de toda la lógica de datos.
+## 🛠️ Stack Tecnológico del Frontend
+*   **Web SPA:** React.js con TypeScript, alojado en **Firebase Hosting** para entregas rápidas globales y escalables.
+*   **App Móvil:** React Native con TypeScript para compilar aplicaciones nativas de alto rendimiento en **iOS y Android**.
+*   **Lógica Compartida:** Uso de TypeScript para interfaces y tipados comunes de API (interfaces de Usuario, Transacción, Cuenta y Categoría).
+*   **Estilo y UI:** Componentes reactivos, adaptados para ofrecer una experiencia fluida y consistente en pantallas de computadoras y dispositivos móviles.
 
-## Tecnologías
+---
 
-- **React 19** — librería para construir la interfaz de usuario.
-- **React Server** — renderizado y arquitectura de componentes de React.
-- **TanStack Query (React Query)** — gestión de estado del servidor: fetching, cache, sincronización y revalidación de datos.
-- **Axios** — cliente HTTP para comunicarse con la REST API en Express.
-- **Tailwind CSS v4** — estilos utilitarios.
-- **TypeScript** — tipado estático.
-- **Vite** — bundler y servidor de desarrollo con HMR.
-- **React Router** — enrutado de la aplicación.
+## 🗺️ Hoja de Ruta de Desarrollo - Frontend
 
-## Requisitos previos
-
-- [Node.js](https://nodejs.org/) 18 o superior
-- npm (incluido con Node.js)
-- La REST API en Express corriendo y accesible
-
-## Instalación
-
-```bash
-# Clonar el repositorio
-git clone <url-del-repositorio>
-cd fing-frontend
-
-# Instalar dependencias
-npm install
-```
-
-## Variables de entorno
-
-Crea un archivo `.env` en la raíz del proyecto con la URL base de la API:
-
-```env
-VITE_API_URL=http://localhost:3000/api
-```
-
-Esta variable se usa como `baseURL` en la instancia de Axios que consume la REST API.
-
-## Scripts disponibles
-
-| Comando           | Descripción                                              |
-| ----------------- | -------------------------------------------------------- |
-| `npm run dev`     | Inicia el servidor de desarrollo con HMR.                |
-| `npm run build`   | Compila TypeScript y genera el build de producción.      |
-| `npm run preview` | Sirve localmente el build de producción.                 |
-| `npm run lint`    | Ejecuta ESLint sobre el proyecto.                        |
-
-## Estructura del proyecto
+La evolución del frontend se divide en tres fases principales de entrega:
 
 ```
-fing-frontend/
-├── public/                  # Recursos estáticos (íconos, favicon)
-├── src/
-│   ├── assets/              # Imágenes y recursos importados
-│   ├── components/
-│   │   ├── HomePage/        # Vista principal (cards, resumen)
-│   │   ├── IndexPage/       # Página de inicio / landing
-│   │   ├── Login/           # Autenticación de usuarios
-│   │   ├── Movements/       # Listado de movimientos
-│   │   ├── Transaction/     # Registro de transacciones
-│   │   ├── Menu.tsx         # Navegación
-│   │   └── ItemMenu.tsx
-│   ├── App.tsx              # Componente raíz
-│   ├── main.tsx             # Punto de entrada y rutas
-│   ├── index.css            # Estilos globales (Tailwind)
-│   └── App.css
-├── index.html
-├── vite.config.ts
-└── package.json
+┌─────────────────────────────────┐
+│     Versión 0.5: MVP Web        │  <--- Inicio con interfaz responsiva en Firebase
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│  Versión 1.0: Expansión Móvil  │  <--- Migración de flujos a React Native (iOS/Android)
+└────────────────┬────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│ Versión 1.5+: Consolidación UI  │  <--- Sincronización de estados locales y offline-first
+└─────────────────────────────────┘
 ```
 
-## Rutas
+1.  **v0.5 (MVP Web):** Construcción de la aplicación web tipo SPA. Configuración del flujo de login, panel de control de gastos (dashboard), gráficos visuales e interfaz de ingreso manual de transacciones. Despliegue continuo en Firebase Hosting.
+2.  **v1.0 (Expansión Móvil):** Creación del repositorio de React Native. Reutilización de los tipados de TypeScript y controladores de API compartidos para construir la interfaz nativa móvil.
+3.  **v1.5+ (Consolidación):** Pulido de componentes, almacenamiento local (offline-first) para visualizaciones rápidas de transacciones anteriores y sincronización de estado fluida.
 
-| Ruta            | Vista        | Descripción                          |
-| --------------- | ------------ | ------------------------------------ |
-| `/`             | Index        | Página de inicio.                    |
-| `/login`        | App          | Inicio de sesión.                    |
-| `/home`         | Home         | Panel con resumen financiero.        |
-| `/movements`    | Movements    | Listado de movimientos.              |
-| `/transactions` | Transaction  | Registro y detalle de transacciones. |
+---
 
-## Comunicación con la API
+## 🔄 Flujo de Integración del Frontend
 
-La aplicación se comunica con la REST API de Express mediante **Axios**, y **TanStack Query** gestiona el estado del servidor (cache, revalidación y estados de carga/error). Se recomienda centralizar la instancia de Axios y los hooks de React Query en `src/` (por ejemplo `src/api/` y `src/hooks/`) para mantener el código organizado.
+El siguiente diagrama ilustra cómo las dos interfaces cliente (Web y Móvil) interactúan de manera independiente y segura con la API unificada del proyecto:
 
-## Licencia
+```
+      ┌─────────────────────────────────────────────────────────────┐
+      │                      ESQUEMAS COMUNES                       │
+      │         - Interfaces de TypeScript Compartidas             │
+      └──────────────────────────────┬──────────────────────────────┘
+                                     │
+                 ┌───────────────────┴───────────────────┐
+                 ▼                                       ▼
+   ┌──────────────────────────┐            ┌──────────────────────────┐
+   │       FRONTEND WEB       │            │      FRONTEND MÓVIL      │
+   │      (React.js SPA)      │            │      (React Native)      │
+   ├──────────────────────────┤            ├──────────────────────────┤
+   │ Alojado en Firebase      │            │ Compilados Nativos       │
+   │ Responsive para Desktop  │            │ Optimizados iOS/Android  │
+   └─────────────┬────────────┘            └─────────────┬────────────┘
+                 │                                       │
+                 │              (Peticiones REST)        │
+                 └───────────────────┬───────────────────┘
+                                     │ (HTTPS / JSON API)
+                                     ▼
+   ┌──────────────────────────────────────────────────────────┐
+   │                    BACKEND (GCP Cloud Run)               │
+   │            - Procesa consultas y guarda transacciones     │
+   └──────────────────────────────────────────────────────────┘
+```
 
-Uso privado.
+---
+
+## 📂 Repositorio de Código Fuente
+*   **Código Frontend Web/Móvil:** [github.com/gastonrb19/fing-front](https://github.com/gastonrb19/fing-front)
