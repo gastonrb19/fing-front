@@ -1,7 +1,7 @@
 const fieldClassName =
   "mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 shadow-sm transition duration-150 ease-in-out placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-3 focus:ring-cyan-100";
 
-export default function FormTransaction() {
+export default function NewMovementForm() {
   return (
     <form className="mx-auto mb-20 w-11/12 max-w-3xl space-y-6 pb-8">
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
@@ -49,7 +49,7 @@ export default function FormTransaction() {
           </div>
         <div>
             <label className="text-sm font-medium text-slate-600">Titúlo</label>
-            <input type="text" className={fieldClassName} placeholder="Título de la transacción" />
+            <input type="text" className={fieldClassName} placeholder="Título del movimiento" />
           </div>
 
           <div className="flex items-end">

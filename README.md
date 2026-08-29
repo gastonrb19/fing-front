@@ -70,3 +70,14 @@ El siguiente diagrama ilustra cómo las dos interfaces cliente (Web y Móvil) in
 
 ## 📂 Repositorio de Código Fuente
 *   **Código Frontend Web/Móvil:** [github.com/gastonrb19/fing-front](https://github.com/gastonrb19/fing-front)
+
+---
+
+## ⌨️ Atajos de Teclado (Comandos)
+
+La interfaz web incluye atajos de teclado para mejorar la agilidad y experiencia del usuario:
+
+*   **`Ctrl + M` (o `Cmd + M`):** Abre/Cierra el menú de navegación principal.
+*   **`Ctrl + F` (o `Cmd + F`):** Despliega el buscador global (Command Palette) por encima de la aplicación.
+*   **`Esc`:** Cierra paneles activos como el buscador global.
+*   **Búsqueda especial `@<numero>`:** Dentro del buscador (Ctrl+F), si escribes el formato `@<numero>` (ej. `@123`) e intro, te redirige al detalle directo del movimiento en lugar de hacer una búsqueda de texto.
