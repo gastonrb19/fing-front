@@ -13,7 +13,6 @@ export default function Movement() {
         </h2>
       </div>
       <WrapCardMovement />
-      <Menu />
     </div>
   );
 }

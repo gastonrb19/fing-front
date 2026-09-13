@@ -18,7 +18,6 @@ export default function Movements() {
         setDisplayFilter={setDisplayFilter}
       />
       <WrapSections/>
-      <Menu />
     </>
   );
 }

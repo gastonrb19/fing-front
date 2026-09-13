@@ -40,6 +40,7 @@ export default function Menu() {
             <ItemMenu title="Home" url="/" />
             <ItemMenu title="Movimiento" url="/new-movement" />
             <ItemMenu title="Movimientos" url="/movements" />
+            <ItemMenu title="Amistades" url="/friendships" />
             <li className="w-full text-center">
               <button
                 className={itemClass}

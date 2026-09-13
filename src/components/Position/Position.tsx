@@ -83,7 +83,6 @@ export default function Position() {
         <FormEditFooter isEditing={isEditing} setIsEditing={setIsEditing} />
         </form>
       </div>
-      <Menu />
     </div>
   );
 }

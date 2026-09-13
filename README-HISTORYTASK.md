@@ -11,3 +11,4 @@
 - [x] A la carpeta Transaction cambiarle el nombre a NewMovement y además, realizar el cambio de los nombres de los componentes y todos los que están dentro a el nombre prefijo NewMovement. También a nivel código y donde lo estén llamando. Además también en el router. (Fecha: 2026-08-29)
 - [x] Implementar vista dedicada de Cuotas y Cobros Pendientes del Usuario (`GET /users/:userId/installmentuserpayments`). (100%) (Fecha: 2026-08-29)
 - [x] Agregar movimiento del card hacia la izquierda para abrirlo con más detalles. (Fecha: 2026-08-29)
+- [x] Agregar vista de amistad para aceptar cuotas de pagos asociados a otros usuarios en el sistema (100%) (Fecha: 2026-09-13)

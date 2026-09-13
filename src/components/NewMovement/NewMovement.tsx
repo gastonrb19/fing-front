@@ -1,4 +1,3 @@
-import Menu from "../Menu";
 import NewMovementForm from "./NewMovementForm";
 import NewMovementTitle from "./NewMovementTitle";
 
@@ -7,7 +6,6 @@ export default function NewMovement() {
     <>
       <NewMovementTitle />
       <NewMovementForm />
-      <Menu />
     </>
   );
 }

@@ -6,7 +6,6 @@ export default function Home() {
     <div className="min-h-screen">
       <TitleHome username="Xanxito15" />
       <ContainerCards />
-      <Menu />
     </div>
   );
 }
