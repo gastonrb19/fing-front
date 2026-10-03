@@ -1,4 +1,3 @@
-import Menu from "../Menu";
 import ContainerCards from "./ContainerCards";
 import TitleHome from "./TitleHome";
 export default function Home() {

@@ -7,17 +7,19 @@ interface FriendshipListItemProps {
   person: FriendshipPerson;
   selected?: boolean;
   onSelect?: (personId: string) => void;
+  actionNode?: React.ReactNode;
 }
 
 export default function FriendshipListItem({
   person,
   selected = false,
   onSelect,
+  actionNode,
 }: FriendshipListItemProps) {
   return (
     <li
       onClick={() => onSelect?.(person.id)}
-      className={`w-[90%] rounded-lg px-4 py-3 text-slate-700 transition-colors ${
+      className={`flex w-[90%] items-center justify-between rounded-lg px-4 py-3 text-slate-700 transition-colors ${
         onSelect ? "cursor-pointer" : ""
       } ${
         onSelect
@@ -27,8 +29,13 @@ export default function FriendshipListItem({
           : "bg-slate-100"
       }`}
     >
-      <span className="block font-semibold">{person.name}</span>
-      <span className="text-sm text-slate-500">{person.id}</span>
+      <div>
+        <span className="block font-semibold">{person.name}</span>
+        <span className="text-sm text-slate-500">ID: {person.id}</span>
+      </div>
+      
+      {/* Nodo Inyectable para renderizar Botones de Acción (Eliminar) sin acoplar lógica */}
+      {actionNode && <div>{actionNode}</div>}
     </li>
   );
 }

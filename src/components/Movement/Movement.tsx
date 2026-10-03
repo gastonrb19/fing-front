@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
 import WrapCardMovement from "./WrapCardMovement";
-import Menu from "../Menu";
 
 export default function Movement() {
   const { id } = useParams();

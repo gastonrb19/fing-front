@@ -4,12 +4,14 @@ interface FriendshipListProps {
   people: FriendshipPerson[];
   selectedId?: string | null;
   onSelect?: (personId: string) => void;
+  actionRenderer?: (person: FriendshipPerson) => React.ReactNode;
 }
 
 export default function FriendshipList({
   people,
   selectedId = null,
   onSelect,
+  actionRenderer,
 }: FriendshipListProps) {
   return (
     <ul className="flex w-full flex-col items-center gap-2">
@@ -19,6 +21,7 @@ export default function FriendshipList({
           person={person}
           selected={selectedId === person.id}
           onSelect={onSelect}
+          actionNode={actionRenderer ? actionRenderer(person) : undefined}
         />
       ))}
     </ul>

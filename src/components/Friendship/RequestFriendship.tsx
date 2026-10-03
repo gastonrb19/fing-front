@@ -1,62 +1,124 @@
-import { useMemo, useState } from "react";
 import FriendshipList from "./FriendshipList";
+import { useEffect, useState } from "react";
 import type { FriendshipPerson } from "./FriendshipListItem";
+import FeedbackMessage from "../Shared/FeedbackMessage";
 
 type FriendshipMode = "requests" | "add" | "my-requests";
 
-const friendResults: FriendshipPerson[] = [
-  { id: "USR-007", name: "Amigo 7" },
-  { id: "USR-008", name: "Amigo 8" },
-  { id: "USR-009", name: "Amigo 9" },
-];
+// TODO: Obtener dinámicamente del AuthContext (LocalStorage/Cookie)
+// TODO: Obtener dinámicamente del AuthContext (LocalStorage/Cookie)
+  const currentUserId = 3;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-const sentRequests: FriendshipPerson[] = [
-  { id: "USR-010", name: "Amigo 10" },
-  { id: "USR-011", name: "Amigo 11" },
-];
+interface RequestFriendshipProps {
+  onFriendAdded: () => void;
+}
 
-const receivedRequests: FriendshipPerson[] = [
-  { id: "USR-012", name: "Amigo 12" },
-  { id: "USR-013", name: "Amigo 13" },
-];
-
-export default function RequestFriendship() {
+export default function RequestFriendship({ onFriendAdded }: RequestFriendshipProps) {
   const [mode, setMode] = useState<FriendshipMode>("requests");
   const [search, setSearch] = useState("");
-  const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
-  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  
   const [selectedReceivedRequestId, setSelectedReceivedRequestId] = useState<string | null>(null);
 
-  const filteredFriends = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+  // Estados reales para la BD
+  const [receivedRequests, setReceivedRequests] = useState<FriendshipPerson[]>([]);
+  const [loading, setLoading] = useState(false);
+  
+  // Manejo de Feedback visual
+  const [feedback, setFeedback] = useState<{ status: "success" | "error" | null; message: string }>({
+    status: null,
+    message: ""
+  });
 
-    if (!normalizedSearch) {
-      return friendResults;
+  // Cargar solicitudes entrantes
+  const loadReceivedRequests = () => {
+    setLoading(true);
+    fetch(`${API_URL}/users/${currentUserId}/friend-requests`)
+      .then((res) => res.json())
+      .then((data) => {
+        if(Array.isArray(data)){
+           const mapped = data.map((req: any) => ({
+             id: req.id.toString(),
+             name: req.sender?.username || `Usuario ${req.sender?.id}`
+           }));
+           setReceivedRequests(mapped);
+        }
+      })
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (mode === "requests") {
+      loadReceivedRequests();
     }
+    // Limpiar feedback al cambiar de modo
+    setFeedback({ status: null, message: "" });
+  }, [mode]);
 
-    return friendResults.filter(
-      (friend) =>
-        friend.name.toLowerCase().includes(normalizedSearch) ||
-        friend.id.toLowerCase().includes(normalizedSearch),
-    );
-  }, [search]);
+  // Responder Solicitud (Aceptar o Rechazar)
+  const handleRespondRequest = async (status: "ACCEPTED" | "REJECTED") => {
+    if (!selectedReceivedRequestId) return;
+
+    try {
+      const res = await fetch(`${API_URL}/friend-requests/${selectedReceivedRequestId}/respond`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentUser: currentUserId, status })
+      });
+
+      if (res.ok) {
+        setFeedback({ status: "success", message: status === "ACCEPTED" ? "¡Solicitud aceptada!" : "Solicitud denegada." });
+        if (status === "ACCEPTED") onFriendAdded();
+        setSelectedReceivedRequestId(null);
+        loadReceivedRequests(); 
+      } else {
+        const err = await res.json();
+        setFeedback({ status: "error", message: err.error?.message || err.message || "Error procesando solicitud." });
+      }
+    } catch (error) {
+      setFeedback({ status: "error", message: "Error de red al conectar con el servidor." });
+    }
+  };
+
+  // Enviar Solicitud
+  const handleSendRequest = async () => {
+    if (!search) return;
+    const receiverId = parseInt(search);
+
+    try {
+      const res = await fetch(`${API_URL}/friend-requests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentUser: currentUserId, receiverId })
+      });
+
+      if (res.ok || res.status === 201) {
+        setFeedback({ status: "success", message: "¡Solicitud de amistad enviada correctamente!" });
+        setSearch("");
+      } else {
+        const err = await res.json();
+        // El backend mandará NotFoundError (404) o GeneralError (400)
+        setFeedback({ status: "error", message: err.error?.message || err.message || "Error al enviar la solicitud." });
+      }
+    } catch (error) {
+      setFeedback({ status: "error", message: "Error de red al conectar con el servidor." });
+    }
+  };
 
   const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const nextMode = event.target.value as FriendshipMode;
     setMode(nextMode);
-    setSelectedFriendId(null);
-    setSelectedRequestId(null);
     setSelectedReceivedRequestId(null);
     setSearch("");
   };
 
   return (
-    <section className="h-96 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="h-96 overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-sm flex flex-col">
       <h2 className="mb-4 text-xl font-semibold text-cyan-700">Nuevos amigos</h2>
       <select
         value={mode}
         onChange={handleModeChange}
-        className="mb-4 w-[90%] rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700"
+        className="mb-4 w-[90%] mx-auto block rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700"
       >
         <option value="requests">Te solicitaron</option>
         <option value="add">Agregar amigo</option>
@@ -66,55 +128,50 @@ export default function RequestFriendship() {
       {mode === "add" && (
         <div className="flex flex-col items-center gap-3">
           <input
-            type="text"
+            type="number"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="ingresa nombre o id"
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setFeedback({ status: null, message: "" }); // Limpia feedback al escribir
+            }}
+            placeholder="Ingresa ID numérico del usuario"
             className="w-[90%] rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 outline-none focus:border-cyan-700"
           />
-          <FriendshipList
-            people={filteredFriends}
-            selectedId={selectedFriendId}
-            onSelect={setSelectedFriendId}
-          />
           <button
             type="button"
-            disabled={!selectedFriendId}
-            className="rounded-lg bg-cyan-700 px-5 py-2 text-white transition-colors hover:bg-cyan-900 disabled:cursor-not-allowed disabled:bg-slate-300"
+            onClick={handleSendRequest}
+            disabled={!search}
+            className="mt-2 rounded-lg bg-cyan-700 px-5 py-2 text-white transition-colors hover:bg-cyan-900 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
-            Agregar
+            Enviar Solicitud
           </button>
-        </div>
-      )}
-
-      {mode === "my-requests" && (
-        <div className="flex flex-col items-center gap-3">
-          <FriendshipList
-            people={sentRequests}
-            selectedId={selectedRequestId}
-            onSelect={setSelectedRequestId}
-          />
-          <button
-            type="button"
-            disabled={!selectedRequestId}
-            className="rounded-lg bg-cyan-700 px-5 py-2 text-white transition-colors hover:bg-cyan-900 disabled:cursor-not-allowed disabled:bg-slate-300"
-          >
-            Cancelar solicitud
-          </button>
+          
+          <FeedbackMessage status={feedback.status} message={feedback.message} />
         </div>
       )}
 
       {mode === "requests" && (
         <div className="flex flex-col items-center gap-3">
-          <FriendshipList
-            people={receivedRequests}
-            selectedId={selectedReceivedRequestId}
-            onSelect={setSelectedReceivedRequestId}
-          />
+          {loading ? (
+            <p className="text-sm text-slate-500">Cargando...</p>
+          ) : receivedRequests.length === 0 ? (
+            <p className="text-sm text-slate-500">No tienes solicitudes pendientes.</p>
+          ) : (
+            <FriendshipList
+              people={receivedRequests}
+              selectedId={selectedReceivedRequestId}
+              onSelect={(id) => {
+                  setSelectedReceivedRequestId(id);
+                  setFeedback({ status: null, message: "" });
+              }}
+            />
+          )}
+          
           <div className="flex gap-3">
             <button
               type="button"
               disabled={!selectedReceivedRequestId}
+              onClick={() => handleRespondRequest("ACCEPTED")}
               className="rounded-lg bg-cyan-700 px-5 py-2 text-white transition-colors hover:bg-cyan-900 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
               Aceptar
@@ -122,11 +179,20 @@ export default function RequestFriendship() {
             <button
               type="button"
               disabled={!selectedReceivedRequestId}
+              onClick={() => handleRespondRequest("REJECTED")}
               className="rounded-lg bg-purple-700 px-5 py-2 text-white transition-colors hover:bg-purple-900 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
               Denegar
             </button>
           </div>
+          
+          <FeedbackMessage status={feedback.status} message={feedback.message} />
+        </div>
+      )}
+      
+      {mode === "my-requests" && (
+        <div className="flex flex-col items-center gap-3">
+           <p className="text-sm text-slate-500 text-center">Aquí verás las solicitudes que has enviado (Próximamente).</p>
         </div>
       )}
     </section>
