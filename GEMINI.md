@@ -11,3 +11,7 @@
 
 ## Comunicación entre Componentes Hermanos
 - Siguiendo la regla de "Estado Centralizado", si un componente hermano altera datos que otro hermano debe reflejar (ej. Aceptar solicitud -> Actualizar lista de amigos), eleva un estado numérico (`refreshKey`) al Padre y pásalo como dependencia al `useEffect` del hermano que debe recargarse. No utilices librerías externas de estado global solo para esto.
+
+
+## Trampas de FormData y Campos Deshabilitados
+- **Campos Ocultos/Disabled en Submit:** Recuerda que el recolector nativo de React/Navegador (`new FormData(e.currentTarget)`) ignora silenciosamente cualquier campo `<select>` o `<input>` que tenga el atributo `disabled`. Si dependes de un valor inmutable para el envío (como un ID seleccionado que no debe cambiarse), debes mantenerlo habilitado pero visualmente "readonly", extraerlo de un estado de React en lugar del FormData, o usar un `<input type="hidden">`.

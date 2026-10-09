@@ -6,6 +6,8 @@ import WrapSections from "./WrapSections";
 
 export default function Movements() {
   const [displayFilter, setDisplayFilter] = useState(false);
+  const [activeFilters, setActiveFilters] = useState({});
+
   return (
     <>
       <TitleMovements
@@ -15,8 +17,9 @@ export default function Movements() {
       <FilterDocument
         displayFilter={displayFilter}
         setDisplayFilter={setDisplayFilter}
+        onFilter={(filters) => setActiveFilters(filters)}
       />
-      <WrapSections/>
+      <WrapSections filters={activeFilters} />
     </>
   );
 }

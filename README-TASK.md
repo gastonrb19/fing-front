@@ -30,7 +30,13 @@
 - [ ] Rescate Financiero: Opción en la tarjeta para pagar la cuota de un amigo asumiendo el rol (`assumedByUserId`).
 
 ### 🔗 Integración de Datos Base y Refactorización
-- [ ] Eliminar Hardcodes (`CURRENT_USER_ID`): Reemplazar la constante `const currentUserId = 1;` en todas las vistas (Amistades, Movimientos) por el contexto de autenticación o LocalStorage.
+- [ ] Eliminar Hardcodes (`CURRENT_USER_ID`): Reemplazar la asquerosa constante `const CURRENT_USER_ID = 1;` en `NewMovementForm.tsx`, Amistades y Movimientos, usando un AuthContext o LocalStorage post-login.
 - [ ] Conectar Categorías: Consumir el Endpoint `GET /categories` para poblar el dropdown de Categorías en `NewMovementForm.tsx` (en lugar de datos quemados).
 - [ ] Conectar Tipos de Gasto: Consumir el Endpoint de Tipos de Gasto para poblar el dropdown de periodicidad (Fijo/Variable/Cuotas).
 - [ ] Revisión General de Datos Estáticos: Auditar otros campos que actualmente tienen valores en duro en los dropdowns del frontend y enlazarlos al backend.
+
+### Fase 3: Detalle y Cuotas
+- [ ] Tarea 3: Conectar la vista de Detalle de Cuota (`Position.tsx`) con el REST API para cargar la información específica de un pago (`InstallmentUserPayment`).
+
+- [ ] Tarea 1: Añadir etiquetas visuales (Badge) en `InstallmentItem.tsx` para indicar si un amigo aceptó (`accepted`) o rechazó (`rejected`) la deuda asignada.
+- [ ] Tarea 2: Conectar el `handleSubmit` en `WrapCardMovement.tsx` con el endpoint `PUT /spends/:id` para guardar la edición del Gasto.

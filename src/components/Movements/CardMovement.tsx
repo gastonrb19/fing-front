@@ -7,6 +7,8 @@ interface CardMovementProps {
   description: string;
   amount: number;
   date: string;
+  paidInstallments: number;
+  totalInstallments: number;
 }
 
 export default function CardMovement({
@@ -14,6 +16,8 @@ export default function CardMovement({
   description,
   amount,
   date,
+  paidInstallments,
+  totalInstallments,
 }: CardMovementProps) {
   const [displayCard, setDisplayCard] = useState(false);
   const navigate = useNavigate();
@@ -94,14 +98,19 @@ export default function CardMovement({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="w-full flex flex-row justify-between items-center">
-        <h3 className="text-xl font-bold">
-          <span className="font-bold px-0.5">#</span>
-          {nro}
-        </h3>
-        <p className="italic">
-          <span className="font-bold">$</span>
-          {amount}
+      <div className="w-full flex flex-row justify-between items-center px-1">
+        <div className="flex flex-col text-left">
+          <h3 className="text-xl font-bold text-gray-800">
+            <span className="font-bold px-0.5 text-cyan-700">#</span>
+            {nro}
+          </h3>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+            Pago {paidInstallments}/{totalInstallments}
+          </span>
+        </div>
+        <p className="italic font-semibold text-lg text-slate-700">
+          <span className="font-bold mr-1">$</span>
+          {amount.toLocaleString("es-CL")}
         </p>
       </div>
       <div className={`mt-2 flex flex-col ${displayCard ? "block" : "hidden"}`}>

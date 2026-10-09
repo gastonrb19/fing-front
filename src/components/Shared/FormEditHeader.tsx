@@ -3,9 +3,10 @@
 interface FormEditHeaderProps {
   isEditing: boolean;
   setIsEditing: (editing: boolean) => void;
+  disabledReason?: string;
 }
 
-export default function FormEditHeader({ isEditing, setIsEditing }: FormEditHeaderProps) {
+export default function FormEditHeader({ isEditing, setIsEditing, disabledReason }: FormEditHeaderProps) {
   return (
     <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-6 mb-6">
       <div className="flex items-center gap-3">
@@ -20,14 +21,20 @@ export default function FormEditHeader({ isEditing, setIsEditing }: FormEditHead
           {isEditing ? "Edición" : "Visualización"}
         </span>
       </div>
-      {!isEditing && (
-        <button
-          type="button"
-          onClick={() => setIsEditing(true)}
-          className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 focus:outline-none focus:ring-3 focus:ring-slate-300"
-        >
-          Editar
-        </button>
+      {disabledReason ? (
+        <span className="text-xs font-medium text-red-600 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100">
+          {disabledReason}
+        </span>
+      ) : (
+        !isEditing && (
+          <button
+            type="button"
+            onClick={() => setIsEditing(true)}
+            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 focus:outline-none focus:ring-3 focus:ring-slate-300"
+          >
+            Editar
+          </button>
+        )
       )}
     </div>
   );

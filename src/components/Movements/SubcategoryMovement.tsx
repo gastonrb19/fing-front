@@ -35,6 +35,8 @@ export default function SubcategoryMovement({ subcategory }: SubcategoryMovement
           description={movement.description}
           amount={movement.amount}
           date={movement.date}
+          paidInstallments={movement.paidInstallments}
+          totalInstallments={movement.totalInstallments}
         />
       ))}
       </div>
