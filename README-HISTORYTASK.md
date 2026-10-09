@@ -12,3 +12,6 @@
 - [x] Implementar vista dedicada de Cuotas y Cobros Pendientes del Usuario (`GET /users/:userId/installmentuserpayments`). (100%) (Fecha: 2026-08-29)
 - [x] Agregar movimiento del card hacia la izquierda para abrirlo con más detalles. (Fecha: 2026-08-29)
 - [x] Agregar vista de amistad para aceptar cuotas de pagos asociados a otros usuarios en el sistema (100%) (Fecha: 2026-09-13)
+- [x] Conectar las cards de movimientos con datos reales (API / backend) en vez de datos hardcodeados en WrapCardMovement.tsx. (100%) (Fecha: 2026-10-09)
+- [x] Validación Visual de Porcentajes: Asignar % a cada amigo y validar en tiempo real que la suma sea exactamente 100%. (100%) (Fecha: 2026-10-09)
+- [x] Listar Deudas Propias: Consumir `GET /users/:userId/installmentuserpayments` para renderizar cuotas pendientes no rechazadas. (100%) (Fecha: 2026-10-09)

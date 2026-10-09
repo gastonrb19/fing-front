@@ -1,7 +1,6 @@
 # 📌 Tareas por hacer (TODO)
 
 ### Prioridad alta
-- [ ] Conectar las cards de movimientos con datos reales (API / backend) en vez de datos hardcodeados en WrapCardMovement.tsx.
 - [ ] Formatear amount como moneda (separador de miles, símbolo, decimales) y diferenciar ingresos/gastos por color.
 - [ ] Actualizar interfaces TypeScript (renombrar `totalAmount` a `amount` y adaptar DTOs según el backend refactorizado).
 - [ ] Consumir APIs dinámicas de Categories, Subcategories y TypeSpends directamente desde el componente `NewMovementForm.tsx`.
@@ -17,11 +16,9 @@
 ### 📊 Fase 2: Formulario de Gastos y Splits (`NewMovementForm.tsx`)
 - [ ] Refactor de Inputs: Cambiar "Día vencimiento cuota" de `date` a `number` (1-31), y remover el checkbox "Pagado".
 - [ ] Selector de Amigos (`SplitParticipantsSelector.tsx`): Crear un sub-componente inyectable que liste amistades activas.
-- [ ] Validación Visual de Porcentajes: Asignar % a cada amigo y validar en tiempo real que la suma sea exactamente 100%.
 - [ ] Envío Final: Modificar el `onSubmit` para enviar el Payload al `POST /spends` incluyendo el arreglo de `participants`.
 
 ### 📉 Fase 3: Dashboard de Deudas (`Movements.tsx`)
-- [ ] Listar Deudas Propias: Consumir `GET /users/:userId/installmentuserpayments` para renderizar cuotas pendientes no rechazadas.
 - [ ] Botón de Pagar: Conectar el botón de confirmación con el `PUT /installmentuserpayments/:id` (`paymentDone: true`).
 - [ ] Botón de Rechazo: Agregar botón rojo "Rechazar Asignación" que consuma `PUT /installmentuserpayments/:id/reject`.
 
