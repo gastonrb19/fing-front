@@ -6,7 +6,6 @@
 - [ ] Consumir APIs dinámicas de Categories, Subcategories y TypeSpends directamente desde el componente `NewMovementForm.tsx`.
 
 ### Prioridad media
-- [ ] Habilitar el botón/acción visual de "Pagar Cuota" conectándolo a su respectivo Endpoint (`PUT /installmentuserpayments/:id`).
 - [ ] Renderizar en UI los errores de validación estructurados (Zod) provenientes del backend, marcando los inputs del formulario en rojo.
 
 ### Prioridad baja / mejoras
@@ -19,7 +18,6 @@
 - [ ] Envío Final: Modificar el `onSubmit` para enviar el Payload al `POST /spends` incluyendo el arreglo de `participants`.
 
 ### 📉 Fase 3: Dashboard de Deudas (`Movements.tsx`)
-- [ ] Botón de Pagar: Conectar el botón de confirmación con el `PUT /installmentuserpayments/:id` (`paymentDone: true`).
 - [ ] Botón de Rechazo: Agregar botón rojo "Rechazar Asignación" que consuma `PUT /installmentuserpayments/:id/reject`.
 
 ### 🤝 Fase 4: Evidencias y Solidaridad
@@ -33,7 +31,11 @@
 - [ ] Revisión General de Datos Estáticos: Auditar otros campos que actualmente tienen valores en duro en los dropdowns del frontend y enlazarlos al backend.
 
 ### Fase 3: Detalle y Cuotas
-- [ ] Tarea 3: Conectar la vista de Detalle de Cuota (`Position.tsx`) con el REST API para cargar la información específica de un pago (`InstallmentUserPayment`).
 
 - [ ] Tarea 1: Añadir etiquetas visuales (Badge) en `InstallmentItem.tsx` para indicar si un amigo aceptó (`accepted`) o rechazó (`rejected`) la deuda asignada.
 - [ ] Tarea 2: Conectar el `handleSubmit` en `WrapCardMovement.tsx` con el endpoint `PUT /spends/:id` para guardar la edición del Gasto.
+
+
+### 🚨 Alta Prioridad (Pendientes para la próxima iteración)
+- [ ] **Lógica de Rechazo de Cuotas:** Habilitar el botón en `Position.tsx` para rechazar la cuota (consumiendo `PUT /installmentuserpayments/:id/reject`) y validar que la titularidad regrese al creador.
+- [ ] **Coherencia en Recálculo de Cuotas:** Al editar monto/cuotas en un Gasto Maestro, asegurar que la base de datos reasigne las cuotas reconstruidas a los usuarios correspondientes en vez de dejarlas huérfanas.

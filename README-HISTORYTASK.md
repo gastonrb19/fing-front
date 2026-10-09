@@ -15,3 +15,6 @@
 - [x] Conectar las cards de movimientos con datos reales (API / backend) en vez de datos hardcodeados en WrapCardMovement.tsx. (100%) (Fecha: 2026-10-09)
 - [x] Validación Visual de Porcentajes: Asignar % a cada amigo y validar en tiempo real que la suma sea exactamente 100%. (100%) (Fecha: 2026-10-09)
 - [x] Listar Deudas Propias: Consumir `GET /users/:userId/installmentuserpayments` para renderizar cuotas pendientes no rechazadas. (100%) (Fecha: 2026-10-09)
+- [x] Habilitar el botón/acción visual de "Pagar Cuota" conectándolo a su respectivo Endpoint (`PUT /installmentuserpayments/:id`). (Fecha: 2026-10-09)
+- [x] Botón de Pagar: Conectar el botón de confirmación con el `PUT /installmentuserpayments/:id` (`paymentDone: true`). (Fecha: 2026-10-09)
+- [x] Tarea 3: Conectar la vista de Detalle de Cuota (`Position.tsx`) con el REST API para cargar la información específica de un pago (`InstallmentUserPayment`). (Fecha: 2026-10-09)
