@@ -5,11 +5,15 @@ import { useParams } from "react-router";
 import FormEditHeader from "../Shared/FormEditHeader";
 import FormEditFooter from "../Shared/FormEditFooter";
 import InstallmentItem from "./InstallmentItem";
+import { useAuth } from "../../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function WrapCardMovement() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const currentUserId = user?.id || 1;
+
   const [isEditing, setIsEditing] = useState(false);
   const [spend, setSpend] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -79,10 +83,26 @@ export default function WrapCardMovement() {
     pi.fk_installmentUserPayment?.some((up: any) => up.paymentDone)
   );
 
+  const isSpendOwner = spend.user?.id === currentUserId;
+  const disabledReason = !isSpendOwner
+    ? `Solo el creador (@${spend.user?.username || "dueño"}) puede modificar este gasto`
+    : (anyPaid ? "Bloqueado: Contiene cuotas pagadas" : undefined);
+
   return (
     <div className="mx-auto mb-2 w-full max-w-3xl space-y-6 pb-2">
-      <FormEditHeader isEditing={isEditing} setIsEditing={setIsEditing} disabledReason={anyPaid ? "Bloqueado: Contiene cuotas pagadas" : undefined} />
+      <FormEditHeader isEditing={isEditing} setIsEditing={setIsEditing} disabledReason={disabledReason} />
       
+      {!isSpendOwner && (
+        <div className="rounded-xl border border-purple-200 bg-purple-50 p-4 text-xs text-purple-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-sm">
+          <span>
+            <strong>Gasto compartido:</strong> Este gasto fue creado por <strong>@{spend.user?.username || "un amigo"}</strong>. Abajo puedes ver el detalle y pagar tus cuotas asignadas.
+          </span>
+          <span className="bg-purple-200/70 text-purple-800 font-semibold px-2 py-0.5 rounded text-[11px] whitespace-nowrap">
+            Modo Participante
+          </span>
+        </div>
+      )}
+
       <form className="space-y-6" onSubmit={handleSubmit}>
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
         <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
@@ -206,7 +226,8 @@ export default function WrapCardMovement() {
                 isPaid={payment.paymentDone}
                 isAccepted={payment.accepted}
                 isRejected={payment.rejected}
-                isCurrentUser={payment.user?.id === 1 /* 1 es Gastón */ }
+                isCurrentUser={payment.user?.id === currentUserId}
+                isSpendOwner={spend.user?.id === currentUserId}
                 date={pi.availableDate ? pi.availableDate.split("T")[0] : ""}
               />
             ))
@@ -217,7 +238,7 @@ export default function WrapCardMovement() {
         </div>
       </section>
       
-      <FormEditFooter isEditing={isEditing} setIsEditing={setIsEditing} />
+      {isSpendOwner && <FormEditFooter isEditing={isEditing} setIsEditing={setIsEditing} />}
       </form>
     </div>
   );

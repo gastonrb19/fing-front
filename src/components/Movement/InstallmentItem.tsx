@@ -13,6 +13,7 @@ interface InstallmentItemProps {
   isAccepted: boolean;
   isRejected: boolean;
   isCurrentUser: boolean;
+  isSpendOwner?: boolean;
 }
 
 export default function InstallmentItem({
@@ -25,7 +26,8 @@ export default function InstallmentItem({
   date,
   isAccepted,
   isRejected,
-  isCurrentUser
+  isCurrentUser,
+  isSpendOwner = false
 }: InstallmentItemProps) {
   return (
     <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4 transition-colors hover:bg-slate-100">
@@ -51,6 +53,13 @@ export default function InstallmentItem({
             className={`text-xs font-medium hover:underline ${isPaid ? "text-emerald-600 hover:text-emerald-700" : "text-cyan-600 hover:text-cyan-700"}`}
           >
             {isPaid ? "Tu pago ✓" : "Pagar tu cuota →"}
+          </Link>
+        ) : isSpendOwner ? (
+          <Link
+            to={`/movement/${spendId}/position/${paymentId}`}
+            className={`text-xs font-medium hover:underline ${isPaid ? "text-emerald-600 hover:text-emerald-700" : "text-amber-600 hover:text-amber-700"}`}
+          >
+            {isPaid ? "Pagado ✓" : "Gestionar cuota →"}
           </Link>
         ) : (
           <span className={`text-xs font-medium ${isPaid ? "text-emerald-600" : "text-slate-400"}`}>

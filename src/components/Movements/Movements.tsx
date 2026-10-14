@@ -3,6 +3,7 @@ import FilterDocument from "./FilterMovements";
 import { useState } from "react";
 import TitleMovements from "./TitleMovements";
 import WrapSections from "./WrapSections";
+import RejectedPaymentsAlert from "./RejectedPaymentsAlert";
 
 export default function Movements() {
   const [displayFilter, setDisplayFilter] = useState(false);
@@ -14,6 +15,7 @@ export default function Movements() {
         setDisplayFilter={setDisplayFilter}
         displayFilter={displayFilter}
       />
+      <RejectedPaymentsAlert />
       <FilterDocument
         displayFilter={displayFilter}
         setDisplayFilter={setDisplayFilter}

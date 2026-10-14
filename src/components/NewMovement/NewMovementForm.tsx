@@ -1,23 +1,36 @@
 import { useEffect, useState } from "react";
 import FeedbackMessage from "../Shared/FeedbackMessage";
+import SplitParticipantsSelector, { type ParticipantItem } from "./SplitParticipantsSelector";
+import { useAuth } from "../../context/AuthContext";
 
 const fieldClassName =
-  "mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 shadow-sm transition duration-150 ease-in-out placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-3 focus:ring-cyan-100";
+  "mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 shadow-sm transition duration-150 ease-in-out placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-3 focus:ring-cyan-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:border-slate-300 disabled:cursor-not-allowed";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const CURRENT_USER_ID = 1; // TODO: Extraer desde AuthContext
 
 export default function NewMovementForm() {
+  const { user } = useAuth();
+  const currentUserId = user?.id || 1;
+
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
-  const [types, setTypes] = useState<any[]>([]);
+  const [friends, setFriends] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<ParticipantItem[]>([
+    { userId: currentUserId, percentage: 100 },
+  ]);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ status: "success" | "error" | null; message: string }>({ status: null, message: "" });
+
+  // Actualizar participante inicial si carga el usuario autenticado
+  useEffect(() => {
+    if (user?.id) {
+      setParticipants([{ userId: user.id, percentage: 100 }]);
+    }
+  }, [user?.id]);
 
   const [formData, setFormData] = useState({
     categoryId: "",
     subcategoryId: "",
-    fkTypeSpend: "",
     startPayment: "",
     maxDayToPayment: "", // Número del 1 al 31
     amount: "",
@@ -26,18 +39,23 @@ export default function NewMovementForm() {
     minDayToPayment: "", // Número del 1 al 31
   });
 
-  // 1. Cargar Categorías y Tipos de Gasto al montar
+  // 1. Cargar Categorías y Amigos al montar o al cambiar de usuario
   useEffect(() => {
     fetch(`${API_URL}/categories`)
       .then(res => res.json())
       .then(json => setCategories(json.data || []))
       .catch(console.error);
 
-    fetch(`${API_URL}/typespends`)
-      .then(res => res.json())
-      .then(json => setTypes(json.data || []))
-      .catch(console.error);
-  }, []);
+    if (currentUserId) {
+      fetch(`${API_URL}/users/${currentUserId}/friends`)
+        .then(res => res.json())
+        .then(json => {
+          if (json.success && json.data) setFriends(json.data.map((f: any) => f.friend));
+          else if (Array.isArray(json)) setFriends(json.map((f: any) => f.friend));
+        })
+        .catch(console.error);
+    }
+  }, [currentUserId]);
 
   // 2. Cargar Subcategorías cuando la Categoría cambia
   useEffect(() => {
@@ -51,11 +69,42 @@ export default function NewMovementForm() {
     }
   }, [formData.categoryId]);
 
+  const [isToday, setIsToday] = useState(false);
+
+  const getTodayValues = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return {
+      dateStr: `${year}-${month}-${day}`,
+      dayNum: String(now.getDate())
+    };
+  };
+
+  const handleTodayToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setIsToday(checked);
+    if (checked) {
+      const { dateStr, dayNum } = getTodayValues();
+      setFormData((prev) => ({
+        ...prev,
+        startPayment: dateStr,
+        minDayToPayment: dayNum,
+      }));
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (name === "categoryId") {
       setFormData((prev) => ({ ...prev, subcategoryId: "" }));
+    }
+    if (name === "startPayment" || name === "minDayToPayment") {
+      const { dateStr, dayNum } = getTodayValues();
+      if (name === "startPayment" && value !== dateStr) setIsToday(false);
+      if (name === "minDayToPayment" && value !== dayNum) setIsToday(false);
     }
   };
 
@@ -65,16 +114,32 @@ export default function NewMovementForm() {
     setFeedback({ status: null, message: "" });
 
     try {
+      // Validar sumatoria de porcentajes (debe ser exactamente 100%)
+      const totalPct = participants.reduce((sum, p) => sum + (Number(p.percentage) || 0), 0);
+      const roundedTotal = Math.round(totalPct * 100) / 100;
+      if (Math.abs(roundedTotal - 100) > 0.05) {
+        setFeedback({
+          status: "error",
+          message: `La sumatoria de los porcentajes debe ser exactamente 100% (actual: ${roundedTotal}%).`,
+        });
+        setLoading(false);
+        return;
+      }
+
       const payload = {
         name: formData.name,
         amount: Number(formData.amount),
-        userId: CURRENT_USER_ID,
+        userId: currentUserId,
         subcategoryId: Number(formData.subcategoryId),
-        fkTypeSpend: Number(formData.fkTypeSpend),
+        fkTypeSpend: 1, // Tipo de gasto estándar por defecto
         minDayToPayment: Number(formData.minDayToPayment),
         maxDayToPayment: formData.maxDayToPayment ? Number(formData.maxDayToPayment) : undefined,
         totalInstallment: formData.totalInstallment ? Number(formData.totalInstallment) : 1,
         startPayment: formData.startPayment || new Date().toISOString(),
+        participants: participants.map((p) => ({
+          userId: Number(p.userId),
+          percentage: Number(p.percentage),
+        })),
       };
 
       const res = await fetch(`${API_URL}/spends`, {
@@ -85,9 +150,11 @@ export default function NewMovementForm() {
 
       if (res.ok || res.status === 201) {
         setFeedback({ status: "success", message: "¡Gasto registrado correctamente!" });
+        setIsToday(false);
+        setParticipants([{ userId: currentUserId, percentage: 100 }]);
         // Limpiar formulario excepto las categorías si se desea
         setFormData(prev => ({
-          ...prev, amount: "", name: "", minDayToPayment: "", maxDayToPayment: ""
+          ...prev, amount: "", name: "", minDayToPayment: "", maxDayToPayment: "", startPayment: ""
         }));
       } else {
         const err = await res.json();
@@ -125,18 +192,28 @@ export default function NewMovementForm() {
               ))}
             </select>
           </div>
-          <div>
-            <label className="text-sm font-medium text-slate-600">Tipo de Gasto</label>
-            <select name="fkTypeSpend" value={formData.fkTypeSpend} onChange={handleChange} className={fieldClassName} required>
-              <option value="">--Selecciona--</option>
-              {types.map(t => (
-                <option key={t.id} value={t.id}>{t.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-slate-600">Fecha de compra/ingreso</label>
-            <input name="startPayment" value={formData.startPayment} onChange={handleChange} type="date" className={fieldClassName} required />
+          <div className="md:col-span-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-slate-600">Fecha de compra/gasto</label>
+              <label className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50/80 px-2.5 py-1 text-xs font-semibold text-cyan-800 hover:bg-cyan-100 transition-colors cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={isToday}
+                  onChange={handleTodayToggle}
+                  className="h-3.5 w-3.5 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 accent-cyan-600 cursor-pointer"
+                />
+                Hoy
+              </label>
+            </div>
+            <input 
+              name="startPayment" 
+              value={formData.startPayment} 
+              onChange={handleChange} 
+              type="date" 
+              className={fieldClassName} 
+              disabled={isToday}
+              required 
+            />
           </div>
         </div>
       </section>
@@ -168,6 +245,15 @@ export default function NewMovementForm() {
           </div>
         </div>
       </section>
+
+      <SplitParticipantsSelector
+        participants={participants}
+        setParticipants={setParticipants}
+        friends={friends}
+        currentUserId={currentUserId}
+        totalAmount={Number(formData.amount) || 0}
+        totalInstallment={Number(formData.totalInstallment) || 1}
+      />
 
       <div className="flex flex-col items-center justify-center pt-2 gap-4">
         <FeedbackMessage status={feedback.status} message={feedback.message} />

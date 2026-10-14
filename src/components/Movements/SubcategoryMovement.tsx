@@ -34,6 +34,9 @@ export default function SubcategoryMovement({ subcategory }: SubcategoryMovement
           nro={movement.nro}
           description={movement.description}
           amount={movement.amount}
+          assignedAmount={movement.assignedAmount}
+          isOwner={movement.isOwner}
+          creatorName={movement.creatorName}
           date={movement.date}
           paidInstallments={movement.paidInstallments}
           totalInstallments={movement.totalInstallments}

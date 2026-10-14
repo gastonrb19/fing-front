@@ -5,6 +5,9 @@ export interface MovementItem {
   nro: number;
   description: string;
   amount: number;
+  assignedAmount?: number;
+  isOwner?: boolean;
+  creatorName?: string;
   date: string;
   paidInstallments: number;
   totalInstallments: number;
@@ -22,14 +25,18 @@ export interface LoadInfo {
   subcategories: SubcategoryInfo[];
 }
 
+import { useAuth } from "../../context/AuthContext";
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const CURRENT_USER_ID = 1; // TODO: Cambiar por contexto de Auth
 
 interface WrapSectionsProps {
   filters?: any;
 }
 
 export default function WrapSections({ filters = {} }: WrapSectionsProps) {
+  const { user } = useAuth();
+  const currentUserId = user?.id || 1;
+
   const [infoLoad, setInfoLoad] = useState<LoadInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -44,9 +51,9 @@ export default function WrapSections({ filters = {} }: WrapSectionsProps) {
   const [allSpends, setAllSpends] = useState<any[]>([]);
 
   const fetchSpends = useCallback(async (currentOffset: number) => {
+    if (!currentUserId) return;
     try {
       currentOffset === 0 ? setLoading(true) : setFetchingMore(true);
-      
       
       // Armar query params dinámicos
       let query = `limit=${limit}&offset=${currentOffset}`;
@@ -57,9 +64,18 @@ export default function WrapSections({ filters = {} }: WrapSectionsProps) {
       if (filters.done) query += `&done=${filters.done}`;
       if (filters.role && filters.role !== 'all') query += `&role=${filters.role}`;
 
-      const res = await fetch(`${API_URL}/users/${CURRENT_USER_ID}/spends?${query}`);
+      const res = await fetch(`${API_URL}/users/${currentUserId}/spends?${query}`);
 
-      if (!res.ok) throw new Error("Error fetching spends");
+      if (!res.ok) {
+        let msg = "Error al cargar los movimientos.";
+        try {
+          const errJson = await res.json();
+          msg = errJson.error?.message || errJson.message || msg;
+        } catch {
+          // Si res.json() falla por ser HTML u otro formato
+        }
+        throw new Error(msg);
+      }
       const json = await res.json();
       
       const newSpends = json.data || [];
@@ -103,37 +119,43 @@ export default function WrapSections({ filters = {} }: WrapSectionsProps) {
 
         // Evitar duplicados si por alguna razón la BD manda el mismo ID
         if (!subcategory.movements.find(m => m.nro === spend.id)) {
+            const isOwner = spend.isOwner !== undefined ? spend.isOwner : (spend.user?.id === currentUserId);
             subcategory.movements.push({
               nro: spend.id,
               description: spend.name,
               amount: spend.amount,
+              assignedAmount: spend.assignedAmount !== undefined ? spend.assignedAmount : spend.amount,
+              isOwner: isOwner,
+              creatorName: spend.user?.username || "",
               date: spend.startPayment ? spend.startPayment.split("T")[0] : "",
               paidInstallments: spend.paidInstallments || 0,
-              totalInstallments: spend.totalInstallment || 1,
+              totalInstallments: spend.userTotalInstallments || spend.totalInstallment || 1,
             });
         }
       });
 
       setInfoLoad(Array.from(groupedMap.values()));
       
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("No se pudieron cargar los movimientos.");
+      setError(err?.message || "No se pudieron cargar los movimientos.");
     } finally {
       setLoading(false);
       setFetchingMore(false);
     }
-  }, [allSpends, filters]);
+  }, [allSpends, filters, currentUserId]);
 
   
   useEffect(() => {
-    // Limpiar fantasmas de la UI y errores viejos al cambiar el filtro
+    // Limpiar fantasmas de la UI y errores viejos al cambiar el filtro o usuario
     setAllSpends([]);
     setInfoLoad([]);
     setError("");
+    setOffset(0);
+    setHasMore(true);
     fetchSpends(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+  }, [filters, currentUserId]);
 
 
   const handleLoadMore = () => {

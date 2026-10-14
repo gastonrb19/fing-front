@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import FriendshipList from "./FriendshipList";
 import type { FriendshipPerson } from "./FriendshipListItem";
 import RemoveFriendButton from "./RemoveFriendButton";
+import { useAuth } from "../../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -10,12 +11,12 @@ interface ListFriendsProps {
 }
 
 export default function ListFriendsSection({ refreshKey }: ListFriendsProps) {
+  const { user } = useAuth();
+  const currentUserId = user?.id || 1;
+
   const [friends, setFriends] = useState<FriendshipPerson[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // TODO: Obtener dinámicamente del AuthContext (LocalStorage/Cookie)
-  const currentUserId = 1;
 
   const loadFriends = useCallback(() => {
     setLoading(true);

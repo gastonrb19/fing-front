@@ -6,6 +6,9 @@ interface CardMovementProps {
   nro: number;
   description: string;
   amount: number;
+  assignedAmount?: number;
+  isOwner?: boolean;
+  creatorName?: string;
   date: string;
   paidInstallments: number;
   totalInstallments: number;
@@ -15,6 +18,9 @@ export default function CardMovement({
   nro,
   description,
   amount,
+  assignedAmount,
+  isOwner,
+  creatorName,
   date,
   paidInstallments,
   totalInstallments,
@@ -100,21 +106,45 @@ export default function CardMovement({
     >
       <div className="w-full flex flex-row justify-between items-center px-1">
         <div className="flex flex-col text-left">
-          <h3 className="text-xl font-bold text-gray-800">
-            <span className="font-bold px-0.5 text-cyan-700">#</span>
-            {nro}
-          </h3>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <h3 className="text-xl font-bold text-gray-800">
+              <span className="font-bold px-0.5 text-cyan-700">#</span>
+              {nro}
+            </h3>
+            {isOwner === false && (
+              <span className="text-[10px] font-semibold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full border border-purple-200">
+                {creatorName ? `Por @${creatorName}` : "Asignado"}
+              </span>
+            )}
+          </div>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
             Pago {paidInstallments}/{totalInstallments}
           </span>
         </div>
-        <p className="italic font-semibold text-lg text-slate-700">
-          <span className="font-bold mr-1">$</span>
-          {amount.toLocaleString("es-CL")}
-        </p>
+        <div className="text-right">
+          <p className="italic font-semibold text-lg text-slate-700">
+            <span className="font-bold mr-1">$</span>
+            {(isOwner === false && assignedAmount !== undefined ? assignedAmount : amount).toLocaleString("es-CL")}
+          </p>
+          {isOwner === false && assignedAmount !== undefined && assignedAmount !== amount && (
+            <span className="text-[10px] text-slate-400 block -mt-1">
+              Gasto total: ${amount.toLocaleString("es-CL")}
+            </span>
+          )}
+          {isOwner && assignedAmount !== undefined && assignedAmount !== amount && (
+            <span className="text-[10px] text-slate-400 block -mt-1">
+              Tu parte: ${assignedAmount.toLocaleString("es-CL")}
+            </span>
+          )}
+        </div>
       </div>
       <div className={`mt-2 flex flex-col ${displayCard ? "block" : "hidden"}`}>
         <p className="italic text-center">{description}</p>
+        {isOwner === false && (
+          <p className="text-xs text-purple-700 text-center mt-1 font-medium">
+            Gasto compartido asignado a ti
+          </p>
+        )}
         <div className="flex justify-between items-end mt-4 px-1">
           <Link
             to={`/movement/${nro}`}

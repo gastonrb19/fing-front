@@ -1,13 +1,11 @@
 import FriendshipList from "./FriendshipList";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { FriendshipPerson } from "./FriendshipListItem";
 import FeedbackMessage from "../Shared/FeedbackMessage";
+import { useAuth } from "../../context/AuthContext";
 
 type FriendshipMode = "requests" | "add" | "my-requests";
 
-// TODO: Obtener dinámicamente del AuthContext (LocalStorage/Cookie)
-// TODO: Obtener dinámicamente del AuthContext (LocalStorage/Cookie)
-  const currentUserId = 3;
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 interface RequestFriendshipProps {
@@ -15,6 +13,9 @@ interface RequestFriendshipProps {
 }
 
 export default function RequestFriendship({ onFriendAdded }: RequestFriendshipProps) {
+  const { user } = useAuth();
+  const currentUserId = user?.id || 1;
+
   const [mode, setMode] = useState<FriendshipMode>("requests");
   const [search, setSearch] = useState("");
   
@@ -31,7 +32,8 @@ export default function RequestFriendship({ onFriendAdded }: RequestFriendshipPr
   });
 
   // Cargar solicitudes entrantes
-  const loadReceivedRequests = () => {
+  const loadReceivedRequests = useCallback(() => {
+    if (!currentUserId) return;
     setLoading(true);
     fetch(`${API_URL}/users/${currentUserId}/friend-requests`)
       .then((res) => res.json())
@@ -45,7 +47,7 @@ export default function RequestFriendship({ onFriendAdded }: RequestFriendshipPr
         }
       })
       .finally(() => setLoading(false));
-  };
+  }, [currentUserId]);
 
   useEffect(() => {
     if (mode === "requests") {
@@ -53,7 +55,7 @@ export default function RequestFriendship({ onFriendAdded }: RequestFriendshipPr
     }
     // Limpiar feedback al cambiar de modo
     setFeedback({ status: null, message: "" });
-  }, [mode]);
+  }, [mode, loadReceivedRequests]);
 
   // Responder Solicitud (Aceptar o Rechazar)
   const handleRespondRequest = async (status: "ACCEPTED" | "REJECTED") => {
