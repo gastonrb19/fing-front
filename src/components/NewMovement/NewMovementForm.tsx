@@ -70,6 +70,16 @@ export default function NewMovementForm() {
   }, [formData.categoryId]);
 
   const [isToday, setIsToday] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+
+  const isOnlyCreator =
+    participants.length === 1 && Number(participants[0]?.userId) === Number(currentUserId);
+
+  useEffect(() => {
+    if (!isOnlyCreator && isPaid) {
+      setIsPaid(false);
+    }
+  }, [isOnlyCreator, isPaid]);
 
   const getTodayValues = () => {
     const now = new Date();
@@ -136,6 +146,7 @@ export default function NewMovementForm() {
         maxDayToPayment: formData.maxDayToPayment ? Number(formData.maxDayToPayment) : undefined,
         totalInstallment: formData.totalInstallment ? Number(formData.totalInstallment) : 1,
         startPayment: formData.startPayment || new Date().toISOString(),
+        isPaid: isOnlyCreator ? isPaid : false,
         participants: participants.map((p) => ({
           userId: Number(p.userId),
           percentage: Number(p.percentage),
@@ -151,6 +162,7 @@ export default function NewMovementForm() {
       if (res.ok || res.status === 201) {
         setFeedback({ status: "success", message: "¡Gasto registrado correctamente!" });
         setIsToday(false);
+        setIsPaid(false);
         setParticipants([{ userId: currentUserId, percentage: 100 }]);
         // Limpiar formulario excepto las categorías si se desea
         setFormData(prev => ({
@@ -242,6 +254,35 @@ export default function NewMovementForm() {
           <div className="md:col-span-2">
             <label className="text-sm font-medium text-slate-600">Día máximo límite de pago (1-31, opcional)</label>
             <input name="maxDayToPayment" value={formData.maxDayToPayment} onChange={handleChange} type="number" min="1" max="31" className={fieldClassName} placeholder="Ej. 20" />
+          </div>
+          <div className="md:col-span-2">
+            <label
+              htmlFor="new-movement-is-paid"
+              className={`flex w-full items-center justify-between rounded-xl border px-3 py-3 text-sm shadow-sm transition-colors ${
+                !isOnlyCreator
+                  ? "border-slate-200 bg-slate-200 text-slate-500 cursor-not-allowed"
+                  : isPaid
+                    ? "border-cyan-300 bg-cyan-50/70 text-cyan-900 cursor-pointer"
+                    : "border-slate-200 bg-slate-50 text-slate-600 cursor-pointer"
+              }`}
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">Marcar movimiento como pagado</span>
+                {!isOnlyCreator && (
+                  <span className="text-xs text-slate-500">
+                    Disponible solo cuando únicamente tú estás implicado en el gasto.
+                  </span>
+                )}
+              </div>
+              <input
+                id="new-movement-is-paid"
+                type="checkbox"
+                checked={isPaid}
+                disabled={!isOnlyCreator}
+                onChange={(e) => setIsPaid(e.target.checked)}
+                className="h-4 w-4 accent-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              />
+            </label>
           </div>
         </div>
       </section>

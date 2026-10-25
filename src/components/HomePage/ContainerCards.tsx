@@ -9,21 +9,69 @@ export default function ContainerCards() {
   const currentUserId = user?.id;
   const [spendTotal, setSpendTotal] = useState(0);
   const [spendCount, setSpendCount] = useState(0);
+  const [incomeTotal, setIncomeTotal] = useState(0);
+  const [incomeCount, setIncomeCount] = useState(0);
 
   useEffect(() => {
     if (currentUserId) {
       fetch(`${API_URL}/users/${currentUserId}/spends?limit=1000`)
-        .then(res => res.json())
-        .then(json => {
+        .then((res) => (res.ok ? res.json() : { data: [] }))
+        .then((json) => {
           if (json.data && Array.isArray(json.data)) {
-            setSpendCount(json.len ?? json.data.length);
-            const total = json.data.reduce((acc: number, spend: any) => {
-              const amount = spend.assignedAmount !== undefined && !spend.isOwner
-                ? spend.assignedAmount
-                : (spend.amount || 0);
-              return acc + amount;
-            }, 0);
-            setSpendTotal(total);
+            let totalSpent = 0;
+            let paidCount = 0;
+
+            json.data.forEach((spend: any) => {
+              const isOwner =
+                spend.isOwner !== undefined
+                  ? spend.isOwner
+                  : spend.user?.id === currentUserId;
+
+              const userAssigned =
+                spend.assignedAmount !== undefined
+                  ? Number(spend.assignedAmount)
+                  : isOwner
+                    ? Number(spend.amount || 0)
+                    : 0;
+
+              const totalInst =
+                Number(spend.userTotalInstallments || spend.totalInstallment) ||
+                1;
+              const paidInst = Number(spend.paidInstallments) || 0;
+
+              const userPaid =
+                spend.paidAmount !== undefined
+                  ? Number(spend.paidAmount)
+                  : (userAssigned / totalInst) * paidInst;
+
+              if (paidInst > 0 && userPaid > 0) {
+                totalSpent += userPaid;
+                paidCount += 1;
+              }
+            });
+
+            setSpendCount(paidCount);
+            setSpendTotal(Math.round(totalSpent));
+          }
+        })
+        .catch(console.error);
+
+      fetch(`${API_URL}/users/${currentUserId}/incomes?limit=1000`)
+        .then((res) => (res.ok ? res.json() : { data: [] }))
+        .then((json) => {
+          if (json.data && Array.isArray(json.data)) {
+            let totalDeposited = 0;
+            let depositedCount = 0;
+
+            json.data.forEach((inc: any) => {
+              if (inc.isPayed) {
+                totalDeposited += Number(inc.amount || 0);
+                depositedCount += 1;
+              }
+            });
+
+            setIncomeCount(depositedCount);
+            setIncomeTotal(Math.round(totalDeposited));
           }
         })
         .catch(console.error);
@@ -39,8 +87,8 @@ export default function ContainerCards() {
         imagePath="/arrow-down.png"
       />
       <CardHome
-        counter={0}
-        amount={0}
+        counter={incomeCount}
+        amount={incomeTotal}
         title="Ingresos"
         imagePath="/arrow-trend.png"
       />

@@ -4,6 +4,7 @@ import { useState } from "react";
 import TitleMovements from "./TitleMovements";
 import WrapSections from "./WrapSections";
 import RejectedPaymentsAlert from "./RejectedPaymentsAlert";
+import SummaryMovements from "./SummaryMovements";
 
 export default function Movements() {
   const [displayFilter, setDisplayFilter] = useState(false);
@@ -22,6 +23,7 @@ export default function Movements() {
         onFilter={(filters) => setActiveFilters(filters)}
       />
       <WrapSections filters={activeFilters} />
+      <SummaryMovements filters={activeFilters} />
     </>
   );
 }

@@ -68,7 +68,7 @@ export default function Menu() {
     <>
       <div
         ref={menuRef}
-        className={`fixed bottom-[30px] left-1/2 z-40 flex w-[170px] -translate-x-1/2 flex-col items-center overflow-hidden rounded-2xl bg-white shadow-xl border border-slate-200 transition-all duration-500 ease-in-out ${
+        className={`fixed bottom-[30px] left-1/2 z-40 flex w-[185px] -translate-x-1/2 flex-col items-center overflow-hidden rounded-2xl bg-white shadow-xl border border-slate-200 transition-all duration-500 ease-in-out ${
           hideMenu ? "pointer-events-none translate-y-20 opacity-0" : "translate-y-0 opacity-100"
         }`}
       >
@@ -78,7 +78,11 @@ export default function Menu() {
             <ul className="flex w-full flex-col items-center">
               <ItemMenu title="Home" url="/" onClick={() => setIsOpen(false)} />
               <ItemMenu title="Movimiento" url="/new-movement" onClick={() => setIsOpen(false)} />
+              <ItemMenu title="Ingreso" url="/income" onClick={() => setIsOpen(false)} />
               <ItemMenu title="Movimientos" url="/movements" onClick={() => setIsOpen(false)} />
+              <ItemMenu title="Categoría" url="/category" onClick={() => setIsOpen(false)} />
+              <ItemMenu title="Subcategoría" url="/category/1/subcategory" onClick={() => setIsOpen(false)} />
+              <ItemMenu title="Cat. Ingreso" url="/category-income" onClick={() => setIsOpen(false)} />
               <ItemMenu title="Amistades" url="/friendships" onClick={() => setIsOpen(false)} />
               <li className="w-full text-center">
                 <button

@@ -1,25 +1,25 @@
-# 📌 Tareas por hacer (TODO)
+# 📌 Tareas Frontend (TODO)
 
-### Prioridad alta
-- [ ] Consumir APIs dinámicas de Categories, Subcategories y TypeSpends directamente desde el componente `NewMovementForm.tsx`.
+### 🌐 Integración y Consumo con AWS App Runner (Post-Deploy del Backend)
+- [ ] **Configuración de Endpoint de Producción (`VITE_API_URL`):**
+  - Configurar la URL base apuntando al dominio HTTPS provisto por AWS App Runner (ej. `https://xxxx.us-east-1.awsapprunner.com`).
+  - Validar que el interceptor global (`src/utils/api.ts`) mantenga `credentials: "include"` para el intercambio de cookies HTTP-Only de sesión con el backend en AWS.
+- [ ] **Validación de Autenticación y CORS entre Dominios:**
+  - Probar flujo completo de Login, renovación y cierre de sesión contra el backend en AWS App Runner.
+  - Asegurar compatibilidad de cookies cross-site (`SameSite=None; Secure`).
+- [ ] **Manejo de Resiliencia:**
+  - Implementar mensajes o spinners de espera en caso de que la instancia esté reanudando o atendiendo peticiones iniciales.
 
-### Prioridad media
-- [ ] Renderizar en UI los errores de validación estructurados (Zod) provenientes del backend, marcando los inputs del formulario en rojo.
+### 🧹 Limpieza Integral de Datos en Duro (Información 100% Real)
+- [ ] **Conectar Tipos de Gasto (`GET /typespends`) en `NewMovementForm.tsx`:**
+  - Consumir el endpoint para poblar dinámicamente el selector de periodicidad (Fijo, Variable, Cuotas).
+  - Incluir `fkTypeSpend` seleccionado en el payload del `POST /spends`.
+- [ ] **Datos Reales en Detalle de Movimiento (`WrapCardMovement.tsx`):**
+  - Cargar los tipos de gasto dinámicamente en el selector en lugar de opciones estáticas.
+- [ ] **Auditoría y Depuración de Datos Ficticios:**
+  - Revisar y conectar métricas reales de Ingresos en `ContainerCards.tsx` cuando el backend disponga del módulo, o reflejar estado informativo real sin números inventados.
+  - Auditar todos los dropdowns, listas y selectores de la aplicación para asegurar que ningún campo utilice datos estáticos quemados.
 
-### Prioridad baja / mejoras
-
-
-### 📊 Fase 2: Formulario de Gastos y Splits (`NewMovementForm.tsx`)
-
-### 📉 Fase 3: Dashboard de Deudas (`Movements.tsx`)
-
-### 🤝 Fase 4: Evidencias y Solidaridad
-
-### 🔗 Integración de Datos Base y Refactorización
-- [ ] Conectar Tipos de Gasto: Consumir el Endpoint de Tipos de Gasto para poblar el dropdown de periodicidad (Fijo/Variable/Cuotas).
-- [ ] Revisión General de Datos Estáticos: Auditar otros campos que actualmente tienen valores en duro en los dropdowns del frontend y enlazarlos al backend.
-
-### Fase 3: Detalle y Cuotas
-
-
-### 🚨 Alta Prioridad (Pendientes para la próxima iteración)
+### 🛡️ UX y Validación
+- [ ] **Renderizar Errores de Validación (Zod) en UI:**
+  - Mapear errores de validación estructurados devueltos por el backend marcando los inputs específicos con borde rojo (`border-rose-500`) y texto descriptivo bajo cada campo.
