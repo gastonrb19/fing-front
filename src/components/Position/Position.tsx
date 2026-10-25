@@ -5,8 +5,7 @@ import { useParams } from "react-router";
 import FormEditHeader from "../Shared/FormEditHeader";
 import FormEditFooter from "../Shared/FormEditFooter";
 import { useAuth } from "../../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { API_URL } from "../../utils/api";
 
 export default function Position() {
   const { id, id_position } = useParams();

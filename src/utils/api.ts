@@ -1,34 +1,50 @@
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const rawApiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+export const API_URL = rawApiUrl.replace(/\/+$/, "");
 
 /**
  * Interceptor global de fetch:
  * Asegura que todas las llamadas dirigidas al backend de Fing incluyan siempre
- * credentials: "include" para enviar y recibir la cookie HTTP-Only de sesión (JWT).
+ * credentials: "include" (cookie HTTP-Only) y el header Authorization Bearer
+ * como respaldo ante restricciones de cookies en móviles/proxies.
  */
-const originalFetch = window.fetch;
+if (typeof window !== "undefined" && typeof window.fetch === "function") {
+  const originalFetch = window.fetch.bind(window);
 
-window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-  const urlStr =
-    typeof input === "string"
-      ? input
-      : input instanceof URL
-      ? input.toString()
-      : input.url;
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const urlStr =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : input.url;
 
-  const isBackendRequest =
-    urlStr.startsWith(API_URL) ||
-    urlStr.startsWith("http://localhost:8000") ||
-    urlStr.startsWith("http://127.0.0.1:8000");
+    const isBackendRequest =
+      (API_URL && urlStr.startsWith(API_URL)) ||
+      urlStr.startsWith("/api/") ||
+      urlStr.startsWith("http://localhost:8000") ||
+      urlStr.startsWith("http://127.0.0.1:8000");
 
-  if (isBackendRequest) {
-    init = {
-      ...init,
-      credentials: init?.credentials || "include",
-    };
-  }
+    if (isBackendRequest) {
+      const headers = new Headers(init?.headers || {});
+      try {
+        const storedToken = localStorage.getItem("fing_token");
+        if (storedToken && !headers.has("Authorization")) {
+          headers.set("Authorization", `Bearer ${storedToken}`);
+        }
+      } catch {
+        // Ignorar si localStorage no está disponible
+      }
 
-  return originalFetch(input, init);
-};
+      init = {
+        ...init,
+        headers,
+        credentials: init?.credentials || "include",
+      };
+    }
+
+    return originalFetch(input, init);
+  };
+}
 
 /**
  * Helper para realizar llamadas directas a la API

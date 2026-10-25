@@ -4,6 +4,7 @@ import CategoryIncomeMovement, {
   type CategoryIncomeGroup,
 } from "./CategoryIncomeMovement";
 import { useAuth } from "../../context/AuthContext";
+import { API_URL } from "../../utils/api";
 
 export interface MovementItem {
   nro: number;
@@ -28,8 +29,6 @@ export interface LoadInfo {
   name_category: string;
   subcategories: SubcategoryInfo[];
 }
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 interface WrapSectionsProps {
   filters?: any;

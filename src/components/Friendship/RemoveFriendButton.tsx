@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_URL } from "../../utils/api";
 
 interface RemoveFriendButtonProps {
   currentUserId: number;
@@ -8,7 +9,6 @@ interface RemoveFriendButtonProps {
 
 export default function RemoveFriendButton({ currentUserId, friendId, onRemoveSuccess }: RemoveFriendButtonProps) {
   const [loading, setLoading] = useState(false);
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
   const handleRemove = async (e: React.MouseEvent) => {
     e.stopPropagation(); // Evita que se seleccione la fila al hacer click

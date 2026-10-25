@@ -3,8 +3,7 @@ import FriendshipList from "./FriendshipList";
 import type { FriendshipPerson } from "./FriendshipListItem";
 import RemoveFriendButton from "./RemoveFriendButton";
 import { useAuth } from "../../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { API_URL } from "../../utils/api";
 
 interface ListFriendsProps {
   refreshKey: number;

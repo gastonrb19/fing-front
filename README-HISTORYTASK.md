@@ -33,3 +33,8 @@
 - [x] Tarea 2: Conectar el `handleSubmit` en `WrapCardMovement.tsx` con el endpoint `PUT /spends/:id` para guardar la edición del Gasto. (Fecha: 2026-10-14)
 - [x] **Lógica de Rechazo de Cuotas:** Habilitar el botón en `Position.tsx` para rechazar la cuota (consumiendo `PUT /installmentuserpayments/:id/reject`) y validar que la titularidad regrese al creador. (Fecha: 2026-10-14)
 - [x] **Coherencia en Recálculo de Cuotas:** Al editar monto/cuotas en un Gasto Maestro, asegurar que la base de datos reasigne las cuotas reconstruidas a los usuarios correspondientes en vez de dejarlas huérfanas. (Fecha: 2026-10-14)
+
+- [x] **Módulos Reutilizables de Categorías y Subcategorías:** Crear formularios unificados (`POST`, `GET`, `PUT`, `DELETE`), buscadores modales `<dialog>` y servicios desacoplados en `/logic`. (100%) (Fecha: 2026-10-25)
+- [x] **Módulo Completo de Ingresos y Categorías de Ingreso:** Implementar pantallas `/income` y `/category-income` en menú y router, permitiendo edición completa incluso en ingresos marcados como Depositado (`isPayed`). (100%) (Fecha: 2026-10-25)
+- [x] **Subtotales Minimalistas y Balance en Movimientos (`SummaryMovements.tsx`):** Implementar grid 2x2 con indicadores `(-)` / `(+)` y colores accesibles para `Por pagar`, `Por ingresar`, `Total gastado`, `Total ingreso` y `Total actual` usando `useMemo` y `React.memo`, alineando también las métricas reales de `ContainerCards.tsx`. (100%) (Fecha: 2026-10-25)
+- [x] **Contenerización Frontend con Nginx Reverse Proxy y `API_URL` Centralizada:** Crear `Dockerfile` + `nginx.conf` sirviendo el SPA en puerto `80` con proxy `/api/*` al backend (mismo origen, sin problemas de CORS ni cookies en Safari/iOS) y centralizar `API_URL` en `src/utils/api.ts`. (100%) (Fecha: 2026-10-25)

@@ -1,25 +1,13 @@
 # 📌 Tareas Frontend (TODO)
 
-### 🌐 Integración y Consumo con AWS App Runner (Post-Deploy del Backend)
-- [ ] **Configuración de Endpoint de Producción (`VITE_API_URL`):**
-  - Configurar la URL base apuntando al dominio HTTPS provisto por AWS App Runner (ej. `https://xxxx.us-east-1.awsapprunner.com`).
-  - Validar que el interceptor global (`src/utils/api.ts`) mantenga `credentials: "include"` para el intercambio de cookies HTTP-Only de sesión con el backend en AWS.
-- [ ] **Validación de Autenticación y CORS entre Dominios:**
-  - Probar flujo completo de Login, renovación y cierre de sesión contra el backend en AWS App Runner.
-  - Asegurar compatibilidad de cookies cross-site (`SameSite=None; Secure`).
-- [ ] **Manejo de Resiliencia:**
-  - Implementar mensajes o spinners de espera en caso de que la instancia esté reanudando o atendiendo peticiones iniciales.
+### 🌐 Despliegue y Validación en AWS EC2 (Nginx Puerto 80)
+- [ ] **Subir Cambios de Producción a GitHub (`fing-front`):** Hacer commit y push de los módulos de Ingresos, centralización de `API_URL`, `Dockerfile` y `nginx.conf` antes de clonar en la EC2.
+- [ ] **Desplegar Contenedor Frontend/Nginx en EC2:** Levantar `fing-frontend` con `docker compose -f docker-compose.prod.yml up -d --build` validando acceso público por la Elastic IP en el puerto `80` y soporte de recarga directa en rutas de React Router (`/movements`, `/income`).
+- [ ] **Pruebas End-to-End en Dispositivos Reales (PC y Celulares):** Validar login, persistencia de sesión, registro/edición de gastos compartidos e ingresos, subtotales en Movimientos y cierre de sesión desde ambos celulares (iOS/Android).
 
-### 🧹 Limpieza Integral de Datos en Duro (Información 100% Real)
-- [ ] **Conectar Tipos de Gasto (`GET /typespends`) en `NewMovementForm.tsx`:**
-  - Consumir el endpoint para poblar dinámicamente el selector de periodicidad (Fijo, Variable, Cuotas).
-  - Incluir `fkTypeSpend` seleccionado en el payload del `POST /spends`.
-- [ ] **Datos Reales en Detalle de Movimiento (`WrapCardMovement.tsx`):**
-  - Cargar los tipos de gasto dinámicamente en el selector en lugar de opciones estáticas.
-- [ ] **Auditoría y Depuración de Datos Ficticios:**
-  - Revisar y conectar métricas reales de Ingresos en `ContainerCards.tsx` cuando el backend disponga del módulo, o reflejar estado informativo real sin números inventados.
-  - Auditar todos los dropdowns, listas y selectores de la aplicación para asegurar que ningún campo utilice datos estáticos quemados.
+### 🧹 Limpieza Integral de Datos en Duro (Post-Deploy)
+- [ ] **Conectar Tipos de Gasto (`GET /typespends`) en `NewMovementForm.tsx`:** Consumir el endpoint para poblar dinámicamente el selector de periodicidad (Fijo, Variable, Cuotas) e incluir `fkTypeSpend` en el `POST /spends`.
+- [ ] **Datos Reales en Detalle de Movimiento (`WrapCardMovement.tsx`):** Cargar los tipos de gasto dinámicamente en el selector en lugar de opciones estáticas.
 
 ### 🛡️ UX y Validación
-- [ ] **Renderizar Errores de Validación (Zod) en UI:**
-  - Mapear errores de validación estructurados devueltos por el backend marcando los inputs específicos con borde rojo (`border-rose-500`) y texto descriptivo bajo cada campo.
+- [ ] **Renderizar Errores de Validación (Zod) en UI:** Mapear errores de validación estructurados devueltos por el backend marcando los inputs específicos con borde rojo (`border-rose-500`) y texto descriptivo bajo cada campo.

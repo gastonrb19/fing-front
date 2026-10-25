@@ -57,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Si el backend responde 401 o no está autenticado, limpiar sesión
       setUser(null);
       localStorage.removeItem("fing_user");
+      localStorage.removeItem("fing_token");
     } catch {
       // Si hay error de red no borramos inmediatamente la caché para evitar parpadeos offline
     } finally {
@@ -107,6 +108,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const loggedUser: User = responseData.data;
       setUser(loggedUser);
       localStorage.setItem("fing_user", JSON.stringify(loggedUser));
+      if (responseData.token) {
+        localStorage.setItem("fing_token", responseData.token);
+      }
       setLoading(false);
       return true;
     } catch (err: any) {
@@ -128,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setUser(null);
       localStorage.removeItem("fing_user");
+      localStorage.removeItem("fing_token");
     }
   };
 

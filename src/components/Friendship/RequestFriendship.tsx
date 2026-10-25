@@ -3,10 +3,9 @@ import { useEffect, useState, useCallback } from "react";
 import type { FriendshipPerson } from "./FriendshipListItem";
 import FeedbackMessage from "../Shared/FeedbackMessage";
 import { useAuth } from "../../context/AuthContext";
+import { API_URL } from "../../utils/api";
 
 type FriendshipMode = "requests" | "add" | "my-requests";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 interface RequestFriendshipProps {
   onFriendAdded: () => void;

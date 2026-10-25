@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import FeedbackMessage from "../Shared/FeedbackMessage";
 import SplitParticipantsSelector, { type ParticipantItem } from "./SplitParticipantsSelector";
 import { useAuth } from "../../context/AuthContext";
+import { API_URL } from "../../utils/api";
 
 const fieldClassName =
   "mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 shadow-sm transition duration-150 ease-in-out placeholder:text-slate-400 focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-3 focus:ring-cyan-100 disabled:bg-slate-200 disabled:text-slate-500 disabled:border-slate-300 disabled:cursor-not-allowed";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function NewMovementForm() {
   const { user } = useAuth();

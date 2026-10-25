@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+import { API_URL } from "../../utils/api";
 
 export interface MovementFilters {
   movementType: "all" | "spend" | "income";

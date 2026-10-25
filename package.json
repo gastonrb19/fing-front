@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "test": "node --test tests/*.test.ts",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
