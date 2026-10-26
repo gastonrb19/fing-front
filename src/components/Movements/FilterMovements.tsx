@@ -42,12 +42,12 @@ export default function FilterMovements({
   const [formData, setFormData] = useState<MovementFilters>(initialFilters);
 
   useEffect(() => {
-    fetch(`${API_URL}/categories`)
+    fetch(`${API_URL}/categories?limit=100`)
       .then((res) => res.json())
       .then((json) => setCategories(json.data || []))
       .catch(console.error);
 
-    fetch(`${API_URL}/category-incomes`)
+    fetch(`${API_URL}/category-incomes?limit=100`)
       .then((res) => res.json())
       .then((json) => setCategoryIncomes(json.data || []))
       .catch(console.error);
@@ -55,7 +55,7 @@ export default function FilterMovements({
 
   useEffect(() => {
     if (formData.categoryId) {
-      fetch(`${API_URL}/categories/${formData.categoryId}/subcategories`)
+      fetch(`${API_URL}/categories/${formData.categoryId}/subcategories?limit=100`)
         .then((res) => res.json())
         .then((json) => setSubcategories(json.data || []))
         .catch(console.error);

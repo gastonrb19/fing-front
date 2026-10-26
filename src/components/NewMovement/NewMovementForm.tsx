@@ -40,7 +40,7 @@ export default function NewMovementForm() {
 
   // 1. Cargar Categorías y Amigos al montar o al cambiar de usuario
   useEffect(() => {
-    fetch(`${API_URL}/categories`)
+    fetch(`${API_URL}/categories?limit=100`)
       .then(res => res.json())
       .then(json => setCategories(json.data || []))
       .catch(console.error);
@@ -59,7 +59,7 @@ export default function NewMovementForm() {
   // 2. Cargar Subcategorías cuando la Categoría cambia
   useEffect(() => {
     if (formData.categoryId) {
-      fetch(`${API_URL}/categories/${formData.categoryId}/subcategories`)
+      fetch(`${API_URL}/categories/${formData.categoryId}/subcategories?limit=100`)
         .then(res => res.json())
         .then(json => setSubcategories(json.data || []))
         .catch(console.error);

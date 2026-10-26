@@ -7,7 +7,7 @@ export interface SubcategoryFormData {
 }
 
 export async function fetchAllCategories(): Promise<any[]> {
-  const res = await fetch(`${API_URL}/categories`);
+  const res = await fetch(`${API_URL}/categories?limit=100`);
   if (!res.ok) return [];
   const json = await res.json().catch(() => ({}));
   return json.data || [];
@@ -17,7 +17,7 @@ export async function fetchSubcategoriesByCategory(
   categoryId: string
 ): Promise<any[]> {
   if (!categoryId) return [];
-  const res = await fetch(`${API_URL}/categories/${categoryId}/subcategories`);
+  const res = await fetch(`${API_URL}/categories/${categoryId}/subcategories?limit=100`);
   if (!res.ok) return [];
   const json = await res.json().catch(() => ({}));
   return json.data || [];
